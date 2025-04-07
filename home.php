@@ -16,7 +16,7 @@ session_start();
     <header class="header">
         <div class="header__container container">
             <div class="header__logo">
-                <a href="index.php" class="logo">
+                <a href="home.php" class="logo">
                     <span class="logo__icon"><i class="fas fa-gavel"></i></span>
                     <span class="logo__text">BidSphere</span>
                 </a>
@@ -24,9 +24,9 @@ session_start();
 
             <nav class="header__nav">
                 <ul class="nav__list">
-                    <li class="nav__item"><a href="index.php" class="nav__link active">Home</a></li>
+                    <li class="nav__item"><a href="home.php" class="nav__link ">Home</a></li>
                     <li class="nav__item"><a href="auctions.php" class="nav__link">Auctions</a></li>
-                    <li class="nav__item"><a href="profile.php" class="nav__link">Profile</a></li>
+                    <li class="nav__item"><a href="profile/profile.php" class="nav__link">Dashboard</a></li>
                     <li class="nav__item"><a href="about.php" class="nav__link">About</a></li>
                 </ul>
             </nav>
@@ -296,7 +296,7 @@ session_start();
                 <div class="footer__col">
                     <h3 class="footer__title">Quick Links</h3>
                     <ul class="footer__list">
-                        <li><a href="index.php" class="footer__link">Home</a></li>
+                        <li><a href="home.php" class="footer__link">Home</a></li>
                         <li><a href="auctions.php" class="footer__link">Auctions</a></li>
                         <li><a href="about.php" class="footer__link">About Us</a></li>
                         <li><a href="contact.php" class="footer__link">Contact</a></li>

@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const itemId = this.dataset.itemId;
             if (confirm('Are you sure you want to remove this item from your watchlist?')) {
                 // In a real app, this would be an AJAX call to the server
-                fetch('additional_files/remove_watchlist.php', {
+                fetch('profile/additional_files/remove_watchlist.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -574,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this);
         
         // In a real app, this would be an AJAX call to the server
-        fetch('additional_files/submit_review.php', {
+        fetch('profile/additional_files/submit_review.php', {
             method: 'POST',
             body: formData
         })
@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this);
         
         // In a real app, this would be an AJAX call to the server
-        fetch('additional_files/update_profile.php', {
+        fetch('profile/additional_files/update_profile.php', {
             method: 'POST',
             body: formData
         })

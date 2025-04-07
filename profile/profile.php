@@ -46,7 +46,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'bidding';
     <header class="header">
         <div class="header__container container">
             <div class="header__logo">
-                <a href="index.php" class="logo">
+                <a href="../home.php" class="logo">
                     <span class="logo__icon"><i class="fas fa-gavel"></i></span>
                     <span class="logo__text">BidSphere</span>
                 </a>
@@ -54,9 +54,9 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'bidding';
 
             <nav class="header__nav">
                 <ul class="nav__list">
-                    <li class="nav__item"><a href="index.php" class="nav__link active">Home</a></li>
+                    <li class="nav__item"><a href="../home.php" class="nav__link ">Home</a></li>
                     <li class="nav__item"><a href="auctions.php" class="nav__link">Auctions</a></li>
-                    <li class="nav__item"><a href="profile.php" class="nav__link">Profile</a></li>
+                    <li class="nav__item"><a href="profile.php" class="nav__link">Dashboard</a></li>
                     <li class="nav__item"><a href="about.php" class="nav__link">About</a></li>
                 </ul>
             </nav>
@@ -107,7 +107,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'bidding';
                         </div>
                         <span class="profile__name"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                         <div class="profile__dropdown">
-                            <a href="profile/profile.php" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
+                            <a href="profile.php" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
                             <a href="my_bids.php" class="dropdown__item"><i class="fas fa-gavel"></i> My Bids</a>
                             <a href="watchlist.php" class="dropdown__item"><i class="fas fa-heart"></i> Watchlist</a>
                             <div class="dropdown__divider"></div>
@@ -401,7 +401,7 @@ try {
                 <div class="footer__col">
                     <h3 class="footer__title">Quick Links</h3>
                     <ul class="footer__list">
-                        <li><a href="index.php" class="footer__link">Home</a></li>
+                        <li><a href="../home.php" class="footer__link">Home</a></li>
                         <li><a href="auctions.php" class="footer__link">Auctions</a></li>
                         <li><a href="about.php" class="footer__link">About Us</a></li>
                         <li><a href="contact.php" class="footer__link">Contact</a></li>
@@ -430,7 +430,6 @@ try {
         </div>
     </footer>
 
-    <!-- Review Modal (hidden by default) -->
 
     <!-- <script src="profile-script.js"></script> -->
     <script src="../script.js"></script>

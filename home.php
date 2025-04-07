@@ -77,7 +77,7 @@ session_start();
                         </div>
                         <span class="profile__name"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                         <div class="profile__dropdown">
-                            <a href="profile.php" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
+                            <a href="profile/profile.php" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
                             <a href="my_bids.php" class="dropdown__item"><i class="fas fa-gavel"></i> My Bids</a>
                             <a href="watchlist.php" class="dropdown__item"><i class="fas fa-heart"></i> Watchlist</a>
                             <div class="dropdown__divider"></div>

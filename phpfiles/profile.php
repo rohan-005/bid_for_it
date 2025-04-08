@@ -39,93 +39,12 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'bidding';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="profile-style.css">
+    <link rel="stylesheet" href="../profile/profile-style.css">
 </head>
 <body>
-    <!-- Reuse header from home page -->
-    <header class="header">
-        <div class="header__container container">
-            <div class="header__logo">
-                <a href="../home.php" class="logo">
-                    <span class="logo__icon"><i class="fas fa-gavel"></i></span>
-                    <span class="logo__text">BidSphere</span>
-                </a>
-            </div>
+    <!--header from home page -->
+    <?php include 'header_footer/header.php'; ?>
 
-            <nav class="header__nav">
-                <ul class="nav__list">
-                    <li class="nav__item"><a href="../home.php" class="nav__link ">Home</a></li>
-                    <li class="nav__item"><a href="auctions.php" class="nav__link">Auctions</a></li>
-                    <li class="nav__item"><a href="profile.php" class="nav__link">Dashboard</a></li>
-                    <li class="nav__item"><a href="about.php" class="nav__link">About</a></li>
-                </ul>
-            </nav>
-
-            <div class="header__actions">
-                <button class="action__btn theme-toggle" aria-label="Toggle theme">
-                    <i class="fas fa-moon"></i>
-                </button>
-                
-                <div class="action__btn notification" aria-label="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification__badge">3</span>
-                    <div class="notification__dropdown">
-                        <div class="dropdown__header">
-                            <h3>Notifications</h3>
-                            <button class="dropdown__close">&times;</button>
-                        </div>
-                        <ul class="dropdown__list">
-                            <li class="dropdown__item unread">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <div class="item__content">
-                                    <p>You've been outbid on "Vintage Rolex Watch"</p>
-                                    <small>2 minutes ago</small>
-                                </div>
-                            </li>
-                            <li class="dropdown__item unread">
-                                <i class="fas fa-clock"></i>
-                                <div class="item__content">
-                                    <p>"Signed Basketball" auction ending in 15 minutes</p>
-                                    <small>10 minutes ago</small>
-                                </div>
-                            </li>
-                            <li class="dropdown__item">
-                                <i class="fas fa-trophy"></i>
-                                <div class="item__content">
-                                    <p>You won "Rare Comic Book Collection" for $1,250</p>
-                                    <small>1 hour ago</small>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <?php if(isset($_SESSION['user_id'])): ?>
-                    <div class="action__btn user-profile">
-                        <div class="profile__avatar">
-                            <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
-                        </div>
-                        <span class="profile__name"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                        <div class="profile__dropdown">
-                            <a href="profile.php" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
-                            <a href="my_bids.php" class="dropdown__item"><i class="fas fa-gavel"></i> My Bids</a>
-                            <a href="watchlist.php" class="dropdown__item"><i class="fas fa-heart"></i> Watchlist</a>
-                            <div class="dropdown__divider"></div>
-                            <a href="../login&signup/logout.php" class="dropdown__item"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <div class="action__btn user-auth">
-                        <a href="../login&signup/login.php" class="auth__link">Login</a>
-                    </div>
-                <?php endif; ?>
-                
-                <button class="action__btn mobile-menu-toggle" aria-label="Toggle mobile menu">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-    </header>
 
     <main class="profile-main">
         <div class="profile-container">
@@ -384,51 +303,8 @@ try {
     </main>
 
     <!-- Reuse footer from home page -->
-    <footer class="footer">
-        <div class="footer__container container">
-            <div class="footer__grid">
-                <div class="footer__col">
-                    <h3 class="footer__title">BidSphere</h3>
-                    <p class="footer__text">The premier platform for live auctions of rare and collectible items.</p>
-                    <div class="footer__social">
-                        <a href="#" class="social__link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social__link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social__link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social__link"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer__col">
-                    <h3 class="footer__title">Quick Links</h3>
-                    <ul class="footer__list">
-                        <li><a href="../home.php" class="footer__link">Home</a></li>
-                        <li><a href="auctions.php" class="footer__link">Auctions</a></li>
-                        <li><a href="about.php" class="footer__link">About Us</a></li>
-                        <li><a href="contact.php" class="footer__link">Contact</a></li>
-                    </ul>
-                </div>
-                
-               
-                
-                <div class="footer__col">
-                    <h3 class="footer__title">Contact Us</h3>
-                    <ul class="footer__list">
-                        <li><i class="fas fa-map-marker-alt"></i>Lovely Professional University</li>
-                        <li><i class="fas fa-phone"></i>+91 7894561237</li>
-                        <li><i class="fas fa-envelope"></i> greeenxd@bidshpere.com</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer__bottom">
-                <p class="footer__copyright">&copy; 2025 greeenxd. All rights reserved.</p>
-                <div class="footer__links">
-                    <a href="#" class="footer__link">Privacy Policy</a>
-                    <a href="#" class="footer__link">Terms of Service</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include 'header_footer/footer.php'; ?>
+
 
 
     <!-- <script src="profile-script.js"></script> -->

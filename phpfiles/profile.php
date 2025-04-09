@@ -2,23 +2,17 @@
 session_start();
 require '../login&signup/backend/db_config.php';
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login&signup/login.php");
     exit();
 }
 
-// Get user data
 $user_id = $_SESSION['user_id'];
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
-// Get counts for dashboard
-$bid_count = $pdo->prepare("SELECT COUNT(*) FROM bids WHERE user_id = ?");
-$bid_count->execute([$user_id]);
-$bid_count = $bid_count->fetchColumn();
-
+// Get counts
 $watchlist_count = $pdo->prepare("SELECT COUNT(*) FROM watchlist WHERE user_id = ?");
 $watchlist_count->execute([$user_id]);
 $watchlist_count = $watchlist_count->fetchColumn();
@@ -27,308 +21,597 @@ $won_count = $pdo->prepare("SELECT COUNT(*) FROM won_items WHERE user_id = ?");
 $won_count->execute([$user_id]);
 $won_count = $won_count->fetchColumn();
 
-// Set active tab
-$active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'bidding';
+// Determine active tab
+$tabs = ['bidding', 'won', 'settings'];
+$active_tab = isset($_GET['tab']) && in_array($_GET['tab'], $tabs) ? $_GET['tab'] : 'bidding';
 ?>
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile | SportBid Auctions</title>
+    <title><?php echo htmlspecialchars($user['username']); ?> | Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="../profile/profile-style.css">
+    <style>
+        .profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    min-height: 100vh;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+    padding-bottom: var(--spacing-md);
+}
+
+.profile-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: var(--radius-full);
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    margin: var(--spacing-md) 0;
+    flex-wrap: wrap;
+}
+
+.profile-stat {
+    text-align: center;
+    padding: var(--spacing-md);
+    min-width: 120px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.profile-stat:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    background: var(--hover-color);
+}
+
+.profile-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.profile-stat-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.profile-nav {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+}
+
+.profile-nav::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--border-color);
+    z-index: 0;
+}
+
+.profile-nav a {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-decoration: none;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    margin: 0 var(--spacing-xs);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.profile-nav a:hover {
+    color: var(--primary-color);
+    background: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.profile-nav a.active {
+    color: var(--primary-color);
+    font-weight: 600;
+    background: rgba(var(--primary-color-rgb), 0.1);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+}
+
+.item-card {
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    background-color: var(--card-bg);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.item-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--border-color);
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.item-card:hover::before {
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.won-item {
+    border-left: 4px solid var(--success-color);
+    background: rgba(16, 185, 129, 0.05);
+    position: relative;
+}
+
+.won-item::after {
+    content: 'WON';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--success-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.bid-history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: var(--spacing-md);
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.bid-history-table th, .bid-history-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.bid-history-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+}
+
+.bid-history-table tr:last-child td {
+    border-bottom: none;
+}
+
+.bid-history-table tr:hover td {
+    background: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.settings-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.settings-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.settings-title {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    color: var(--text-color);
+    font-size: 1.8rem;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.settings-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: var(--radius-full);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) calc(var(--spacing-md) + 25px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: all 0.3s;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+    outline: none;
+}
+
+.form-input:focus + i {
+    color: var(--primary-color);
+}
+
+.save-btn {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+}
+
+.save-btn:active {
+    transform: translateY(0);
+}
+
+.save-btn i {
+    margin-right: var(--spacing-xs);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-stats {
+        gap: var(--spacing-md);
+    }
+    
+    .profile-stat {
+        min-width: 100px;
+        padding: var(--spacing-sm);
+    }
+    
+    .profile-stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .profile-nav {
+        flex-wrap: wrap;
+        background: var(--bg-secondary);
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-md);
+    }
+    
+    .profile-nav a {
+        margin: var(--spacing-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+    
+    .item-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-container {
+        padding: var(--spacing-md);
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+    }
+    
+    .fab {
+        bottom: var(--spacing-md);
+        right: var(--spacing-md);
+    }
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0% { opacity: 0.6; transform: scale(0.98); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0.6; transform: scale(0.98); }
+}
+
+.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+    </style>
 </head>
 <body>
-    <!--header from home page -->
     <?php include 'header_footer/header.php'; ?>
-
 
     <main class="profile-main">
         <div class="profile-container">
-            <!-- User Summary Card -->
-            <div class="profile-card profile-card--summary">
-                <div class="profile-avatar">
-                    <?php if ($user['avatar']): ?>
-                        <img src="<?php echo htmlspecialchars($user['avatar']); ?>" alt="User Avatar">
-                    <?php else: ?>
-                        <div class="profile-avatar__initials">
-                            <?php echo strtoupper(substr($user['username'], 0, 2)); ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div class="profile-info">
-                    <h1 class="profile-username"><?php echo htmlspecialchars($user['username']); ?></h1>
-                    <!-- <div class="profile-rating">
-                        <span class="rating-stars" style="--rating: <?php echo $user['rating']; ?>;"></span>
-                        <span class="rating-value"><?php echo number_format($user['rating'], 1); ?></span>
-                    </div> -->
-                    <div class="profile-meta">
-                        <span><i class="fas fa-calendar-alt"></i> Joined <?php echo date('M Y', strtotime($user['created_at'])); ?></span>
-                        <!-- <span><i class="fas fa-clock"></i> Last active <?php echo $user['last_login'] ? date('M j, g:i a', strtotime($user['last_login'])) : 'Never'; ?></span> -->
-                    </div>
-                </div>
+            <div class="profile-header">
+                <h1># <?php echo htmlspecialchars($user['username']); ?></h1>
+                <p>Joined <?php echo date('M Y', strtotime($user['created_at'])); ?></p>
+                <div class="profile-rating">4.5</div>
                 <div class="profile-stats">
-                <div class="rating-container">
-    <div class="star-rating" style="--rating: 4.5;"></div>
-    <span class="rating-value">4.5</span>
-</div>
-                    <div class="stat-item">
-                        <span class="stat-number"><?php echo $watchlist_count; ?></span>
-                        <span class="stat-label">Watching</span>
+                    <div class="profile-stat">
+                        <strong><?php echo $watchlist_count; ?></strong>
+                        <span>WATCHING</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number"><?php echo $won_count; ?></span>
-                        <span class="stat-label">Won</span>
+                    <div class="profile-stat">
+                        <strong><?php echo $won_count; ?></strong>
+                        <span>WON</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Dashboard Tabs -->
-            <div class="profile-tabs">
-                <nav class="tab-nav">
-                    <a href="?tab=bidding" class="tab-link <?php echo $active_tab === 'bidding' ? 'active' : ''; ?>">
-                        <i class="fas fa-gavel"></i> Bidding History
-                    </a>
-                    <a href="?tab=watchlist" class="tab-link <?php echo $active_tab === 'watchlist' ? 'active' : ''; ?>">
-                        <i class="fas fa-heart"></i> Watchlist
-                    </a>
-                    <a href="?tab=won" class="tab-link <?php echo $active_tab === 'won' ? 'active' : ''; ?>">
-                        <i class="fas fa-trophy"></i> Won Items
-                    </a>
-                    <a href="?tab=settings" class="tab-link <?php echo $active_tab === 'settings' ? 'active' : ''; ?>">
-                        <i class="fas fa-cog"></i> Settings
-                    </a>
-                </nav>
+            <div class="profile-nav">
+                <a href="?tab=bidding" class="<?php echo $active_tab === 'bidding' ? 'active' : ''; ?>">Bidding History</a>
+                <a href="?tab=won" class="<?php echo $active_tab === 'won' ? 'active' : ''; ?>">Won Items</a>
+                <a href="?tab=settings" class="<?php echo $active_tab === 'settings' ? 'active' : ''; ?>">Settings</a>
+            </div>
 
-                <div class="tab-content">
-                    <!-- Bidding History Tab -->
-                    <div class="tab-pane <?php echo $active_tab === 'bidding' ? 'active' : ''; ?>" id="bidding">
-                        <h2 class="tab-title">Your Bidding History</h2>
-                        <div class="table-responsive">
-                            <table class="bids-table">
-                                <thead>
-                                    <tr>
-                                        <th>Item</th>
-                                        <th class="sortable" data-sort="amount">Bid Amount <i class="fas fa-sort"></i></th>
-                                        <th class="sortable" data-sort="time">Bid Time <i class="fas fa-sort"></i></th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <?php
-try {
-    $bids_query = "SELECT b.*, i.name, i.image FROM bids b 
-                  JOIN items i ON b.item_id = i.id 
-                  WHERE b.user_id = ? 
-                  ORDER BY b.bid_time DESC LIMIT 10";
-    $bids_stmt = $pdo->prepare($bids_query);
-    $bids_stmt->execute([$user_id]);
+            <!-- Bidding History Tab -->
+            <!-- In the Bidding History Tab section of profile.php -->
+<div id="bidding" class="tab-content <?php echo $active_tab === 'bidding' ? 'active' : ''; ?>">
+    <h2>Bidding History</h2>
+    <?php
+    // Modified query to include is_winner if it exists in your database
+    $bids = $pdo->prepare("SELECT b.*, i.name as item_name, i.end_time, 
+                          (SELECT COUNT(*) FROM bids b2 
+                           WHERE b2.item_id = b.item_id AND b2.amount > b.amount) as outbid_count,
+                          (SELECT COUNT(*) FROM won_items w 
+                           WHERE w.item_id = b.item_id AND w.user_id = ?) as is_winner
+                          FROM bids b 
+                          JOIN items i ON b.item_id = i.item_id 
+                          WHERE b.user_id = ? 
+                          ORDER BY b.bid_time DESC");
+    $bids->execute([$user_id, $user_id]);
     
-    if ($bids_stmt->rowCount() > 0):
-        while ($bid = $bids_stmt->fetch()): ?>
-        <tr>
-            <td>
-                <div class="bid-item">
-                    <?php if (!empty($bid['image'])): ?>
-                        <img src="<?php echo htmlspecialchars($bid['image']); ?>" alt="<?php echo htmlspecialchars($bid['name']); ?>" class="bid-item__image">
-                    <?php endif; ?>
-                    <span class="bid-item__name"><?php echo htmlspecialchars($bid['name']); ?></span>
-                </div>
-            </td>
-            <td>$<?php echo number_format($bid['amount'], 2); ?></td>
-            <td><?php echo date('M j, g:i a', strtotime($bid['bid_time'])); ?></td>
-            <td>
-                <span class="status-badge <?php echo $bid['is_winning'] ? 'status-badge--winning' : 'status-badge--outbid'; ?>">
-                    <?php echo $bid['is_winning'] ? 'Winning' : 'Outbid'; ?>
-                </span>
-            </td>
-        </tr>
-        <?php endwhile;
-    else: ?>
-        <tr>
-            <td colspan="4" class="text-center">No bidding history found</td>
-        </tr>
-    <?php endif;
-} catch (PDOException $e) { ?>
-    <tr>
-        <td colspan="4" class="text-center">Unable to load bidding history</td>
-    </tr>
-<?php } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="pagination">
-                            <button class="btn btn--outline" disabled>Previous</button>
-                            <span class="pagination-info">Page 1 of 1</span>
-                            <button class="btn btn--outline" disabled>Next</button>
-                        </div>
-                    </div>
+    if ($bids->rowCount() > 0): ?>
+        <table class="bid-history-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Bid Amount</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($bid = $bids->fetch()): 
+                    $is_ended = strtotime($bid['end_time']) < time();
+                    $status = 'Active';
+                    
+                    if ($is_ended) {
+                        $status = $bid['is_winner'] > 0 ? 'Won' : 'Lost';
+                    } elseif ($bid['outbid_count'] > 0) {
+                        $status = 'Outbid';
+                    }
+                ?>
+                <tr>
+                    <td>
+                        <a href="../auction/auction.php?item=<?php echo $bid['item_id']; ?>">
+                            <?php echo htmlspecialchars($bid['item_name']); ?>
+                        </a>
+                    </td>
+                    <td>$<?php echo number_format($bid['amount'], 2); ?></td>
+                    <td><?php echo date('M j, Y g:i a', strtotime($bid['bid_time'])); ?></td>
+                    <td><?php echo $status; ?></td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p>No bidding history found.</p>
+    <?php endif; ?>
+</div>
 
-                    <!-- Watchlist Tab -->
-                    <div class="tab-pane <?php echo $active_tab === 'watchlist' ? 'active' : ''; ?>" id="watchlist">
-                        <h2 class="tab-title">Your Watchlist</h2>
-                        <?php if ($watchlist_count > 0): ?>
-                            <div class="watchlist-grid">
-                                <?php
-                                $watchlist_query = "SELECT w.*, i.name, i.image, i.current_bid, i.end_time 
-                                                   FROM watchlist w 
-                                                   JOIN items i ON w.item_id = i.id 
-                                                   WHERE w.user_id = ?";
-                                $watchlist_stmt = $pdo->prepare($watchlist_query);
-                                $watchlist_stmt->execute([$user_id]);
-                                while ($item = $watchlist_stmt->fetch()):
-                                ?>
-                                <div class="auction-card">
-                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" class="auction-card__image">
-                                    <h3 class="auction-card__title"><?php echo htmlspecialchars($item['name']); ?></h3>
-                                    <div class="auction-card__bid">$<?php echo number_format($item['current_bid'], 2); ?></div>
-                                    <div class="auction-card__time">Ends in <?php echo time_remaining($item['end_time']); ?></div>
-                                    <div class="auction-card__actions">
-                                        <button class="btn btn--primary btn--small">Bid Now</button>
-                                        <button class="btn btn--outline btn--small btn--remove" data-item-id="<?php echo $item['item_id']; ?>">
-                                            <i class="fas fa-times"></i> Remove
-                                        </button>
-                                    </div>
-                                </div>
-                                <?php endwhile; ?>
-                            </div>
-                        <?php else: ?>
-                            <div class="empty-state">
-                                <i class="fas fa-binoculars empty-state__icon"></i>
-                                <h3>Your watchlist is empty</h3>
-                                <p>Start adding items to track auctions you're interested in</p>
-                                <a href="index.php" class="btn btn--primary">Browse Auctions</a>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+            <!-- Won Items Tab -->
+            <div id="won" class="tab-content <?php echo $active_tab === 'won' ? 'active' : ''; ?>">
+    <h2>Won Items</h2>
+    <?php
+    // Simplified won items query
+    $won_items = $pdo->prepare("SELECT i.* FROM won_items w 
+                              JOIN items i ON w.item_id = i.item_id 
+                              WHERE w.user_id = ?");
+    $won_items->execute([$user_id]);
+    
+    if ($won_items->rowCount() > 0): ?>
+        <div class="item-grid">
+            <?php while ($item = $won_items->fetch()): ?>
+            <div class="item-card won-item">
+                <h3><?php echo htmlspecialchars($item['name']); ?></h3>
+                <p>Winning Price: $<?php echo number_format($item['current_price'], 2); ?></p>
+                <?php if (!empty($item['image_url'])): ?>
+                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" 
+                         alt="<?php echo htmlspecialchars($item['name']); ?>"
+                         style="max-width: 100%; height: auto; margin-top: 10px;">
+                <?php endif; ?>
+                <a href="../auction/auction.php?item=<?php echo $item['item_id']; ?>" class="btn">View Details</a>
+            </div>
+            <?php endwhile; ?>
+        </div>
+    <?php else: ?>
+        <p>No won items yet.</p>
+    <?php endif; ?>
+</div>
 
-                    <!-- Won Items Tab -->
-                    <div class="tab-pane <?php echo $active_tab === 'won' ? 'active' : ''; ?>" id="won">
-                        <h2 class="tab-title">Items You've Won</h2>
-                        <?php if ($won_count > 0): ?>
-                            <div class="won-items-list">
-                                <?php
-                                $won_query = "SELECT w.*, i.name, i.image 
-                                            FROM won_items w 
-                                            JOIN items i ON w.item_id = i.id 
-                                            WHERE w.user_id = ? 
-                                            ORDER BY w.won_date DESC";
-                                $won_stmt = $pdo->prepare($won_query);
-                                $won_stmt->execute([$user_id]);
-                                while ($item = $won_stmt->fetch()):
-                                ?>
-                                <div class="won-item">
-                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" class="won-item__image">
-                                    <div class="won-item__info">
-                                        <h3 class="won-item__name"><?php echo htmlspecialchars($item['name']); ?></h3>
-                                        <div class="won-item__price">Won for $<?php echo number_format($item['final_price'], 2); ?></div>
-                                        <div class="won-item__status">
-                                            <span class="status-badge status-badge--<?php echo strtolower($item['payment_status']); ?>">
-                                                <?php echo ucfirst($item['payment_status']); ?>
-                                            </span>
-                                        </div>
-                                        <?php if ($item['payment_status'] === 'completed' && !$item['rating']): ?>
-                                            <div class="won-item__review">
-                                                <button class="btn btn--small btn--outline btn--review" data-item-id="<?php echo $item['id']; ?>">
-                                                    <i class="fas fa-star"></i> Leave Review
-                                                </button>
-                                            </div>
-                                        <?php elseif ($item['rating']): ?>
-                                            <div class="won-item__rating">
-                                                <span class="rating-stars" style="--rating: <?php echo $item['rating']; ?>;"></span>
-                                                <span class="rating-text">Your rating</span>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="won-item__actions">
-                                        <button class="btn btn--small btn--outline">
-                                            <i class="fas fa-envelope"></i> Contact Seller
-                                        </button>
-                                        <?php if ($item['payment_status'] === 'pending'): ?>
-                                            <button class="btn btn--small btn--primary">
-                                                <i class="fas fa-credit-card"></i> Complete Payment
-                                            </button>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <?php endwhile; ?>
-                            </div>
-                        <?php else: ?>
-                            <div class="empty-state">
-                                <i class="fas fa-trophy empty-state__icon"></i>
-                                <h3>No won items yet</h3>
-                                <p>Start bidding on auctions to win amazing items</p>
-                                <a href="../home.php" class="btn btn--primary">Browse Auctions</a>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Settings Tab -->
-                    <div class="tab-pane <?php echo $active_tab === 'settings' ? 'active' : ''; ?>" id="settings">
-                        <h2 class="tab-title">Account Settings</h2>
-                        <form class="settings-form" id="profileSettings">
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="avatar">Avatar URL</label>
-                                <input type="url" id="avatar" name="avatar" value="<?php echo htmlspecialchars($user['avatar']); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="current_password">Current Password (to change password)</label>
-                                <input type="password" id="current_password" name="current_password">
-                            </div>
-                            <div class="form-group">
-                                <label for="new_password">New Password</label>
-                                <input type="password" id="new_password" name="new_password">
-                            </div>
-                            <div class="form-group">
-                                <label for="confirm_password">Confirm New Password</label>
-                                <input type="password" id="confirm_password" name="confirm_password">
-                            </div>
-                            <button type="submit" class="btn btn--primary">Save Changes</button>
-                        </form>
-                    </div>
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content <?php echo $active_tab === 'settings' ? 'active' : ''; ?>">
+    <div class="settings-container">
+        <h2 class="settings-title">Account Settings</h2>
+        
+        <form class="settings-form" method="POST" action="update_profile.php">
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" 
+                           value="<?php echo htmlspecialchars($user['username']); ?>" 
+                           class="form-input">
                 </div>
             </div>
-        </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" 
+                           value="<?php echo htmlspecialchars($user['email']); ?>" 
+                           class="form-input">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="password">New Password</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" 
+                           placeholder="Leave blank to keep current" 
+                           class="form-input">
+                </div>
+            </div>
+            
+            <button type="submit" class="save-btn">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </form>
+    </div>
+</div>
     </main>
 
-    <!-- Reuse footer from home page -->
     <?php include 'header_footer/footer.php'; ?>
-
-
-
-    <!-- <script src="profile-script.js"></script> -->
     <script src="../script.js"></script>
+    <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get current tab from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentTab = urlParams.get('tab') || 'bidding';
+        
+        // Highlight the active tab
+        const tabLinks = document.querySelectorAll('.profile-nav a');
+        tabLinks.forEach(link => {
+            const tabName = link.getAttribute('href').split('=')[1];
+            if (tabName === currentTab) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+        
+        // Show the active tab content
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => {
+            if (content.id === currentTab) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
+        });
+    });
+    </script>
 </body>
 </html>
-
-<?php
-// Helper function to calculate time remaining
-function time_remaining($end_time) {
-    $now = new DateTime();
-    $end = new DateTime($end_time);
-    $interval = $now->diff($end);
-    
-    if ($interval->invert) {
-        return 'Ended';
-    }
-    
-    if ($interval->days > 0) {
-        return $interval->days . ' days';
-    } elseif ($interval->h > 0) {
-        return $interval->h . ' hours';
-    } else {
-        return $interval->i . ' minutes';
-    }
-}
-?>

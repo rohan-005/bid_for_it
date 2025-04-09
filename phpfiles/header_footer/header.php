@@ -21,7 +21,7 @@
                 <ul class="nav__list">
                     <li class="nav__item"><a href="../phpfiles/home.php" class="nav__link ">Home</a></li>
                     <li class="nav__item"><a href="../phpfiles/profile.php" class="nav__link ">Dashboard</a></li>
-                    <li class="nav__item"><a href="auctions.php" class="nav__link">Auctions</a></li>
+                    <li class="nav__item"><a href="../phpfiles/auction.php" class="nav__link">Auctions</a></li>
                     <li class="nav__item"><a href="about.php" class="nav__link">About</a></li>
                 </ul>
             </nav>

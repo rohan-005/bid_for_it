@@ -72,11 +72,11 @@
                         </div>
                         <span class="profile__name"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                         <div class="profile__dropdown">
-                            <a href="../phpfiles/profile.php" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
-                            <a href="my_bids.php" class="dropdown__item"><i class="fas fa-gavel"></i> My Bids</a>
-                            <a href="watchlist.php" class="dropdown__item"><i class="fas fa-heart"></i> Watchlist</a>
+                            <a href="../phpfiles/profile.php?tab=settings" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
+                            <a href="../phpfiles/profile.php" class="dropdown__item"><i class="fas fa-gavel"></i> My Bids</a>
+                            <a href="../phpfiles/profile.php?tab=won" class="dropdown__item"><i class="fas fa-heart"></i>My Winnings</a>
                             <div class="dropdown__divider"></div>
-                            <a href="../../login&signup/logout.php" class="dropdown__item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            <a href="../login&signup/logout.php" class="dropdown__item"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>
                     </div>
                 <?php else: ?>

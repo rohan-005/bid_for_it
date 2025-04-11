@@ -25,7 +25,7 @@ session_start();
                 <div class="hero__stats">
                     <div class="stat__item">
                         <span class="stat__label">Current Bid</span>
-                        <span class="stat__value">$24,750</span>
+                        <span class="stat__value">$150</span>
                     </div>
                     <div class="stat__item">
                         <span class="stat__label">Bids</span>
@@ -33,13 +33,14 @@ session_start();
                     </div>
                     <div class="stat__item">
                         <span class="stat__label">Time Left</span>
-                        <span class="stat__value countdown" data-end="2025-04-08T14:30:00">2d 4h 15m</span>
+                        <span class="stat__value countdown" data-end="2025-04-20T14:30:00">2d 4h 15m</span>
                     </div>
                 </div>
                 
                 <div class="hero__actions">
-                    <button class="btn btn--primary">Place Bid</button>
-                    <button class="btn btn--outline">Watch Auction</button>
+                    <a href="auction.php">
+                        <button class="btn btn--primary">Place Bid</button>
+                    </a>
                 </div>
             </div>
             
@@ -97,11 +98,11 @@ session_start();
     <section class="section live-auctions">
         <div class="section__container container">
             <div class="section__header">
-                <h2 class="section__title">Live Auctions <span class="live-badge"><i class="fas fa-circle"></i> LIVE</span></h2>
+                <h2 class="section__title">Upcoming Auctions <span class="live-badge"><i class="fas fa-circle"></i>Upcoming</span></h2>
                 <div class="section__actions">
                     <button class="btn btn--small btn--outline" id="sortPrice">Sort by Price</button>
                     <button class="btn btn--small btn--outline" id="sortTime">Sort by Time</button>
-                    <a href="auctions.php" class="section__link">View All</a>
+                    <a href="auction.php" class="section__link">Live Auctions</a>
                 </div>
             </div>
             
@@ -121,7 +122,7 @@ session_start();
             </div>
         </div>
     </section>
-
+    
     <!-- Leaderboard Section -->
     <section class="section leaderboard">
         <div class="section__container container">

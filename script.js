@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const distance = endTime - now;
             
             if (distance < 0) {
-                element.textContent = 'Auction Ended';
+                element.textContent = '...';
                 return;
             }
             
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
             description: '1950s Submariner, excellent condition',
             price: 1250,
             bids: 12,
-            endTime: '2025-04-07T08:45:00',
+            endTime: '2025-04-20T08:45:00',
             category: 'collectibles'
         },
         {
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
             description: '"The Great Gatsby" 1925 original',
             price: 3450,
             bids: 8,
-            endTime: '2025-04-07T12:30:00',
+            endTime: '2025-04-20T12:30:00',
             category: 'collectibles'
         },
         {
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
             description: '1950s Ray-Ban Aviators',
             price: 320,
             bids: 5,
-            endTime: '2025-04-06T18:15:00',
+            endTime: '2025-04-20T18:15:00',
             category: 'collectibles'
         },
        
@@ -264,16 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="overlay__timer countdown" data-end="${auction.endTime}">1d 2h</span>
                     </div>
                 </div>
-                <div class="card__content">
-                    <h3 class="card__title">${auction.title}</h3>
-                    <p class="card__description">${auction.description}</p>
-                    <div class="card__price">$${auction.price.toLocaleString()}</div>
-                    <button class="btn btn--small bid-btn">Bid Now</button>
-                    <div class="bid-form">
-                        <input type="number" placeholder="Your bid (min $${auction.price + 50})" min="${auction.price + 50}">
-                        <button class="btn btn--small btn--primary submit-bid">Submit</button>
-                    </div>
-                </div>
+               
             `;
             
             auctionsGrid.appendChild(card);
@@ -282,40 +273,40 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initialize countdowns
         updateCountdowns();
         
-        // Add event listeners to bid buttons
-        document.querySelectorAll('.bid-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.closest('.auction__card').classList.add('show-bid-form');
-            });
-        });
+        // // Add event listeners to bid buttons
+        // document.querySelectorAll('.bid-btn').forEach(btn => {
+        //     btn.addEventListener('click', function() {
+        //         this.closest('.auction__card').classList.add('show-bid-form');
+        //     });
+        // });
         
         // Add event listeners to submit bid buttons
-        document.querySelectorAll('.submit-bid').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const card = this.closest('.auction__card');
-                const input = card.querySelector('.bid-form input');
-                const bidAmount = parseInt(input.value);
-                const currentPrice = parseInt(card.querySelector('.card__price').textContent.replace(/\D/g, ''));
+        // document.querySelectorAll('.submit-bid').forEach(btn => {
+        //     btn.addEventListener('click', function() {
+        //         const card = this.closest('.auction__card');
+        //         const input = card.querySelector('.bid-form input');
+        //         const bidAmount = parseInt(input.value);
+        //         const currentPrice = parseInt(card.querySelector('.card__price').textContent.replace(/\D/g, ''));
                 
-                if (bidAmount > currentPrice) {
-                    // Update UI
-                    card.querySelector('.card__price').textContent = `$${bidAmount.toLocaleString()}`;
-                    card.querySelector('.card__price').classList.add('bid-updated');
-                    card.querySelector('.overlay__text').textContent = `${parseInt(card.querySelector('.overlay__text').textContent) + 1} Bids`;
-                    card.classList.remove('show-bid-form');
+        //         if (bidAmount > currentPrice) {
+        //             // Update UI
+        //             card.querySelector('.card__price').textContent = `$${bidAmount.toLocaleString()}`;
+        //             card.querySelector('.card__price').classList.add('bid-updated');
+        //             card.querySelector('.overlay__text').textContent = `${parseInt(card.querySelector('.overlay__text').textContent) + 1} Bids`;
+        //             card.classList.remove('show-bid-form');
                     
-                    // Remove animation class after animation completes
-                    setTimeout(() => {
-                        card.querySelector('.card__price').classList.remove('bid-updated');
-                    }, 500);
+        //             // Remove animation class after animation completes
+        //             setTimeout(() => {
+        //                 card.querySelector('.card__price').classList.remove('bid-updated');
+        //             }, 500);
                     
-                    // Show live update
-                    showLiveUpdate(`${auctions.find(a => a.id == card.dataset.id).title} received new bid: $${bidAmount.toLocaleString()}`);
-                } else {
-                    alert(`Your bid must be higher than the current price of $${currentPrice.toLocaleString()}`);
-                }
-            });
-        });
+        //             // Show live update
+        //             showLiveUpdate(`${auctions.find(a => a.id == card.dataset.id).title} received new bid: $${bidAmount.toLocaleString()}`);
+        //         } else {
+        //             alert(`Your bid must be higher than the current price of $${currentPrice.toLocaleString()}`);
+        //         }
+        //     });
+        // });
     }
     
     // Initial render

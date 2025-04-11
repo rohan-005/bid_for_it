@@ -75,6 +75,8 @@
                             <a href="../phpfiles/profile.php?tab=settings" class="dropdown__item"><i class="fas fa-user"></i> Profile</a>
                             <a href="../phpfiles/profile.php" class="dropdown__item"><i class="fas fa-gavel"></i> My Bids</a>
                             <a href="../phpfiles/profile.php?tab=won" class="dropdown__item"><i class="fas fa-heart"></i>My Winnings</a>
+                            <a href="../phpfiles/upload_item.php" class="dropdown__item"><i class="fas fa-list"></i>List Your Item</a>
+                            <a href="../phpfiles/your_items.php" class="dropdown__item"><i class="fas fa-list"></i>Your Item</a>
                             <div class="dropdown__divider"></div>
                             <a href="../login&signup/logout.php" class="dropdown__item"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>

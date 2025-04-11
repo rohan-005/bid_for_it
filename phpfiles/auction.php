@@ -480,53 +480,75 @@ $watchlist_items = $stmt->fetchAll(PDO::FETCH_COLUMN);
             </div>
             
             <!-- Auction Items Grid -->
-            <div class="auction-grid">
-                <?php if (empty($auction_items)): ?>
-                    <div class="empty-state">
-                        <i class="fas fa-gavel empty-state-icon"></i>
-                        <h3>No active auctions at the moment</h3>
-                        <p>Check back later for new items</p>
+            <!-- Auction Items Grid -->
+<div class="auction-grid">
+    <?php if (empty($auction_items)): ?>
+        <div class="empty-state">
+            <i class="fas fa-gavel empty-state-icon"></i>
+            <h3>No active auctions at the moment</h3>
+            <p>Check back later for new items</p>
+        </div>
+    <?php else: ?>
+        <?php foreach ($auction_items as $item): 
+            // Skip items belonging to the current user
+            if ($item['seller_id'] == $user_id) continue;
+            
+            $is_watched = in_array($item['item_id'], $watchlist_items);
+            $time_left = time_remaining($item['end_time']);
+        ?>
+            <div class="auction-item" 
+                 data-item-id="<?php echo $item['item_id']; ?>"
+                 data-category="<?php echo htmlspecialchars($item['category']); ?>">
+                <div class="auction-item-image">
+                    <img src="<?php echo htmlspecialchars($item['image_url'] ?: '../images/default-item.jpg'); ?>" 
+                         alt="<?php echo htmlspecialchars($item['name']); ?>">
+                    <div class="auction-time-left" data-end-time="<?php echo $item['end_time']; ?>">
+                        <i class="fas fa-clock"></i> <?php echo $time_left; ?>
                     </div>
-                <?php else: ?>
-                    <?php foreach ($auction_items as $item): 
-                        $is_watched = in_array($item['item_id'], $watchlist_items);
-                        $time_left = time_remaining($item['end_time']);
-                    ?>
-                        <div class="auction-item" 
-                             data-item-id="<?php echo $item['item_id']; ?>"
-                             data-category="<?php echo htmlspecialchars($item['category']); ?>">
-                            <div class="auction-item-image">
-                                <img src="<?php echo htmlspecialchars($item['image_url'] ?: '../images/default-item.jpg'); ?>" 
-                                     alt="<?php echo htmlspecialchars($item['name']); ?>">
-                                <div class="auction-time-left" data-end-time="<?php echo $item['end_time']; ?>">
-                                    <i class="fas fa-clock"></i> <?php echo $time_left; ?>
-                                </div>
-                            </div>
-                            
-                            <div class="auction-item-details">
-                                <h3><?php echo htmlspecialchars($item['name']); ?></h3>
-                                <p class="auction-item-description"><?php echo htmlspecialchars($item['description']); ?></p>
-                                
-                                <div class="auction-item-price">
-                                    <span>Current Bid:</span>
-                                    <span class="price-amount">$<?php echo number_format($item['current_price'], 2); ?></span>
-                                </div>
-                                
-                                <div class="auction-item-actions">
-                                    <button class="btn btn-primary btn-bid" 
-                                            data-item-id="<?php echo $item['item_id']; ?>"
-                                            data-item-name="<?php echo htmlspecialchars($item['name']); ?>"
-                                            data-item-image="<?php echo htmlspecialchars($item['image_url'] ?: '../images/default-item.jpg'); ?>"
-                                            data-current-price="<?php echo $item['current_price']; ?>"
-                                            data-end-time="<?php echo $item['end_time']; ?>">
-                                        Place Bid
-                                    </button>
-                                </div>
-                            </div>
+                    
+                    <!-- Watchlist button -->
+                    <button class="watchlist-btn <?php echo $is_watched ? 'watched' : ''; ?>" 
+                            data-item-id="<?php echo $item['item_id']; ?>">
+                        <!-- <i class="fas fa-heart"></i> -->
+                    </button>
+                </div>
+                
+                <div class="auction-item-details">
+                    <div class="item-header">
+                        <h3><?php echo htmlspecialchars($item['name']); ?></h3>
+                        <span class="item-category"><?php echo ucfirst($item['category']); ?></span>
+                    </div>
+                    
+                    <p class="auction-item-description"><?php echo htmlspecialchars($item['description']); ?></p>
+                    
+                    <div class="auction-item-meta">
+                        <div class="auction-item-price">
+                            <span>Current Bid:</span>
+                            <span class="price-amount">$<?php echo number_format($item['current_price'], 2); ?></span>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                        
+                        
+                    </div>
+                    
+                    <div class="auction-item-actions">
+                        <button class="btn btn-primary btn-bid" 
+                                data-item-id="<?php echo $item['item_id']; ?>"
+                                data-item-name="<?php echo htmlspecialchars($item['name']); ?>"
+                                data-item-image="<?php echo htmlspecialchars($item['image_url'] ?: '../images/default-item.jpg'); ?>"
+                                data-current-price="<?php echo $item['current_price']; ?>"
+                                data-end-time="<?php echo $item['end_time']; ?>">
+                            Place Bid
+                        </button>
+                        
+                        <!-- <a href="item_details.php?id=<?php echo $item['item_id']; ?>" class="btn btn-outline">
+                            View Details
+                        </a> -->
+                    </div>
+                </div>
             </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
         </div>
     </main>
 
@@ -562,12 +584,7 @@ $watchlist_items = $stmt->fetchAll(PDO::FETCH_COLUMN);
                     <button type="submit" name="place_bid" class="btn-submit-bid">Submit Bid</button>
                 </form>
                 
-                <div class="bid-history">
-                    <h3>Bid History</h3>
-                    <div class="bid-history-list" id="bidHistoryList">
-                        <!-- Bid history will be populated here -->
-                    </div>
-                </div>
+                
             </div>
         </div>
     </div>

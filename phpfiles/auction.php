@@ -540,9 +540,7 @@ $watchlist_items = $stmt->fetchAll(PDO::FETCH_COLUMN);
                             Place Bid
                         </button>
                         
-                        <!-- <a href="item_details.php?id=<?php echo $item['item_id']; ?>" class="btn btn-outline">
-                            View Details
-                        </a> -->
+                        
                     </div>
                 </div>
             </div>

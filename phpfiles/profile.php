@@ -453,11 +453,9 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], $tabs) ? $_GET['tab'
             </div>
 
             <!-- Bidding History Tab -->
-            <!-- In the Bidding History Tab section of profile.php -->
 <div id="bidding" class="tab-content <?php echo $active_tab === 'bidding' ? 'active' : ''; ?>">
     <h2>Bidding History</h2>
     <?php
-    // Modified query to include is_winner if it exists in your database
     $bids = $pdo->prepare("SELECT b.*, i.name as item_name, i.end_time, 
                           (SELECT COUNT(*) FROM bids b2 
                            WHERE b2.item_id = b.item_id AND b2.amount > b.amount) as outbid_count,

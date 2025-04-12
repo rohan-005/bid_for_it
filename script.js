@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
             auctionsGrid.appendChild(card);
         });
         
-        // Initialize countdowns
+        
         updateCountdowns();
         
         // // Add event listeners to bid buttons

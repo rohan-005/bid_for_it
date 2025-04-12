@@ -144,9 +144,6 @@ $sample_items = [
 try {
     $pdo->beginTransaction();
     
-    // Clear existing sample items (optional)
-    // $pdo->exec("DELETE FROM items WHERE seller_id = 1");
-    
     // Insert sample items
     $stmt = $pdo->prepare("INSERT INTO items 
         (name, description, starting_price, current_price, image_url, category, start_time, end_time, seller_id, status) 

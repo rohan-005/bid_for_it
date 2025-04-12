@@ -27,8 +27,8 @@
                     <ul class="footer__list">
                         <li><a href="../phpfiles/home.php" class="footer__link">Home</a></li>
                         <li><a href="../phpfiles/auction.php" class="footer__link">Auctions</a></li>
-                        <li><a href="about.php" class="footer__link">About Us</a></li>
-                        <li><a href="contact.php" class="footer__link">Contact</a></li>
+                        <li><a href="../phpfiles/about.php" class="footer__link">About Us</a></li>
+                        <li><a href="../phpfiles/contact.php" class="footer__link">Contact</a></li>
                     </ul>
                 </div>
                 

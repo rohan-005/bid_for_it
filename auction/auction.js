@@ -1,6 +1,3 @@
-
-
-
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize variables
     let currentSort = 'ending';

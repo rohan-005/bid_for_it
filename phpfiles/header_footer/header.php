@@ -83,7 +83,7 @@
                     </div>
                 <?php else: ?>
                     <div class="action__btn user-auth">
-                        <a href="../../login&signup/login.php" class="auth__link">Login</a>
+                        <a href="../login&signup/login.php" class="auth__link">Login</a>
                     </div>
                 <?php endif; ?>
                 

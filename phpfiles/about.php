@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 $project = [
-    'name' => 'BidForIt',
+    'name' => 'BidSphere',
     'duration' => '2 months',
     'mission' => 'To create a seamless online bidding platform that connects buyers and sellers in a transparent, efficient marketplace.',
     'vision' => 'A world where buying and selling through auctions is accessible to everyone, promoting fair pricing and opportunities for all.',

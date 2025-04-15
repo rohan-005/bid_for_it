@@ -527,7 +527,6 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], $tabs) ? $_GET['tab'
                          alt="<?php echo htmlspecialchars($item['name']); ?>"
                          style="max-width: 100%; height: auto; margin-top: 10px;">
                 <?php endif; ?>
-                <a href="../auction/auction.php?item=<?php echo $item['item_id']; ?>" class="btn">View Details</a>
             </div>
             <?php endwhile; ?>
         </div>

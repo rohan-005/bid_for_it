@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
             'description' => $_POST['description'],
             'starting_price' => (float)$_POST['starting_price'],
             'category' => $_POST['category'],
-            'condition' => $_POST['condition'],
+            'condition' => $_POST['condition'], // This is the problematic field
             'end_time' => $_POST['end_time'],
             'item_id' => $item_id
         ];
@@ -42,14 +42,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
             
             if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
                 $update_data['image_url'] = $targetPath;
+                // Optionally delete the old image file
+                if ($item['image_url'] && file_exists($item['image_url'])) {
+                    unlink($item['image_url']);
+                }
             }
         }
 
-        // Build the SQL update query
+        // Build the SQL update query with proper escaping for reserved keywords
         $setParts = [];
         foreach ($update_data as $key => $value) {
             if ($key !== 'item_id') {
-                $setParts[] = "$key = :$key";
+                // Escape reserved keywords with backticks
+                $escapedKey = ($key === 'condition') ? '`condition`' : $key;
+                $setParts[] = "$escapedKey = :$key";
             }
         }
         

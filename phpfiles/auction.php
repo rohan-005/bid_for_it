@@ -478,8 +478,7 @@ $watchlist_items = $stmt->fetchAll(PDO::FETCH_COLUMN);
                     <input type="text" id="search" name="search" placeholder="Search items...">
                 </div>
             </div>
-            
-            <!-- Auction Items Grid -->
+        
             <!-- Auction Items Grid -->
 <div class="auction-grid">
     <?php if (empty($auction_items)): ?>

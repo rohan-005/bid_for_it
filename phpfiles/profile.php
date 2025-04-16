@@ -550,7 +550,7 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], $tabs) ? $_GET['tab'
                            class="form-input">
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label class="form-label" for="email">Email</label>
                 <div class="input-with-icon">

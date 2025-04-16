@@ -71,10 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="social-login">
                     <p>Or login with</p>
                     <div class="social-icons">
-                        <a href="#" class="social-icon"><i class="fab fa-google"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                    </div>
+    <a href="https://accounts.google.com/o/oauth2/auth?
+        client_id=YOUR_CLIENT_ID.apps.googleusercontent.com&
+        redirect_uri=YOUR_REDIRECT_URI&
+        response_type=code&
+        scope=email profile&
+        prompt=select_account" 
+        class="social-icon">
+        <i class="fab fa-google"></i>
+    </a>
+    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+</div>
                 </div>
                 
                 <div class="auth-footer">

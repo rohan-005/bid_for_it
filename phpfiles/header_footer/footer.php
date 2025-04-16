@@ -15,10 +15,10 @@
                     <h3 class="footer__title">BidSphere</h3>
                     <p class="footer__text">The premier platform for live auctions of rare and collectible items.</p>
                     <div class="footer__social">
-                        <a href="#" class="social__link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social__link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social__link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social__link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.facebook.com/" class="social__link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/home?lang=en" class="social__link"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/" class="social__link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/feed/" class="social__link"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
                 

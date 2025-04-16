@@ -656,7 +656,7 @@ $watchlist_items = $stmt->fetchAll(PDO::FETCH_COLUMN);
                 document.getElementById('bidAmount').value = minBid.toFixed(2);
                 document.getElementById('minBidHint').textContent = `Minimum bid: $${minBid.toFixed(2)}`;
                 
-                // Load bid history (AJAX call)
+                
                 loadBidHistory(itemId);
                 
                 // Show modal

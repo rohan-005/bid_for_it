@@ -163,11 +163,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .login-link:hover {
         text-decoration: underline;
     }
+    .top-login-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    background: var(--primary-color, #6366f1);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.top-login-btn:hover {
+    background: var(--primary-dark, #4f46e5);
+}
+
 </style>
 
 
 </head>
 <body>
+    <!-- <?php include '../phpfiles/header_footer/header.php'; ?> -->
+    <a href="login.php" class="top-login-btn">Login</a>
 
     <main class="password-recovery">
         <div class="recovery-card">
